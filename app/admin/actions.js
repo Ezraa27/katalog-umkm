@@ -178,3 +178,68 @@ export async function ubahProduk(prevStateOrFormData, maybeFormData) {
   revalidatePath("/");
   redirect("/admin");
 }
+
+export async function hapusProduk(idOrFormData) {
+  const id = idOrFormData instanceof FormData ? idOrFormData.get("id") : idOrFormData;
+
+  if (!id) {
+    return { error: "ID produk tidak valid." };
+  }
+
+  const supabase = await createAdminClient();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return { error: "Anda belum login atau sesi telah berakhir. Silakan login kembali." };
+  }
+
+  const { error: deleteError } = await supabase
+    .from("produk")
+    .delete()
+    .eq("id", id);
+
+  if (deleteError) {
+    return { error: deleteError.message || "Gagal menghapus produk." };
+  }
+
+  revalidatePath("/", "layout");
+  revalidatePath("/admin");
+  revalidatePath("/");
+  return { sukses: true };
+}
+
+export async function hapusProduk(idOrFormData) {
+  const id = idOrFormData instanceof FormData ? idOrFormData.get("id") : idOrFormData;
+
+  if (!id) {
+    return { error: "ID produk tidak valid." };
+  }
+
+  const supabase = await createAdminClient();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return { error: "Anda belum login atau sesi telah berakhir. Silakan login kembali." };
+  }
+
+  const { error: deleteError } = await supabase
+    .from("produk")
+    .delete()
+    .eq("id", id);
+
+  if (deleteError) {
+    return { error: deleteError.message || "Gagal menghapus produk." };
+  }
+
+  revalidatePath("/", "layout");
+  revalidatePath("/admin");
+  revalidatePath("/");
+  return { sukses: true };
+}
+

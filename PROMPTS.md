@@ -174,5 +174,24 @@ Buat Server Action ubahProduk di app/admin/actions.js untuk memperbarui data pro
 **Perbaikan:**
 - Menambahkan penanganan pesan error melalui query parameter `searchParams` agar pesan kegagalan validasi atau update dapat ditampilkan dengan jelas pada form.
 
+### US-10 Hapus produk [SENDIRI]
+
+**Prompt:**
+
+US-10: Hapus Produk (Terkunci Login)
+
+Baca AGENTS.md aturan keamanan nomor 3 dan docs/user-stories.md bagian US-10.
+Buat Server Action hapusProduk di app/admin/actions.js untuk menghapus produk dari tabel "produk" berdasarkan id. Wajib memverifikasi login admin di server sebelum penghapusan dilakukan.
+Ubah tombol "Hapus" pada components/TabelProduk.jsx supaya meminta konfirmasi terlebih dahulu (misalnya via window.confirm) sebelum memanggil aksi hapus. Pertahankan tampilan tabel dan styling tombol bahaya yang sudah ada.
+
+**Hasil:**
+- Membuat Server Action `hapusProduk` di `app/admin/actions.js` dengan proteksi login admin via `supabase.auth.getUser()`, perintah delete pada tabel `produk` di Supabase, dan revalidasi cache rute.
+- Mengubah `components/TabelProduk.jsx` menjadi Client Component yang menampilkan konfirmasi `window.confirm` sebelum memanggil Server Action `hapusProduk`.
+- Mempertahankan styling tabel dan tombol varian bahaya secara konsisten.
+
+**Perbaikan:**
+- Menggunakan `useTransition` pada aksi hapus untuk memberikan transisi halus dan mencegah double-click saat proses penghapusan berlangsung.
+
+
 
 
