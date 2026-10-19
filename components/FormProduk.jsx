@@ -6,6 +6,7 @@ import Tombol from "@/components/Tombol";
 export default function FormProduk({ produk = {}, labelTombol, action, error, isPending }) {
   return (
     <form action={action} className="flex max-w-xl flex-col gap-4">
+      {produk?.id && <input type="hidden" name="id" value={produk.id} />}
       {error && (
         <div className="rounded-lg border border-garis bg-permukaan p-3 text-sm text-bahaya">
           {error}

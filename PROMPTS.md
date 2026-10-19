@@ -154,4 +154,25 @@ Sambungkan Server Action tersebut ke form di app/admin/produk/baru/page.jsx (dan
 **Perbaikan:**
 - Menambahkan validasi nilai harga tidak boleh negatif dan penanganan fallback error pesan yang jelas jika Supabase mengembalikan kegagalan.
 
+### US-09 Ubah produk [SENDIRI]
+
+**Prompt:**
+
+US-09: Ubah Produk (Terkunci Login)
+
+Baca AGENTS.md aturan keamanan nomor 3 dan docs/user-stories.md bagian US-09.
+Ubah app/admin/produk/[id]/ubah/page.jsx supaya mengambil data lama produk dari database Supabase berdasarkan id (ingat params di Next.js 16 berupa Promise). Jika produk tidak ditemukan, panggil notFound().
+Buat Server Action ubahProduk di app/admin/actions.js untuk memperbarui data produk di database. Wajib memeriksa login di server sebelum data diubah. Sambungkan data lama ke komponen FormProduk, dan setelah berhasil simpan perubahan, alihkan kembali ke /admin. Hapus CatatanBelumAktif dari halaman ini.
+
+**Hasil:**
+- Mengubah `app/admin/produk/[id]/ubah/page.jsx` agar mengambil data lama produk dari database Supabase via `createAdminClient()`.
+- Memanggil `notFound()` jika produk tidak ditemukan atau ID tidak valid.
+- Menambahkan input hidden `id` pada `components/FormProduk.jsx` dan mengoper data lama ke dalamnya.
+- Membuat Server Action `ubahProduk` di `app/admin/actions.js` dengan proteksi login admin di server via `supabase.auth.getUser()`, update ke Supabase, revalidasi cache, dan redirect ke `/admin`.
+- Menghapus komponen `CatatanBelumAktif` dari halaman ubah produk.
+
+**Perbaikan:**
+- Menambahkan penanganan pesan error melalui query parameter `searchParams` agar pesan kegagalan validasi atau update dapat ditampilkan dengan jelas pada form.
+
+
 
