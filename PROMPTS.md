@@ -134,3 +134,24 @@ Tampilkan daftar produk menggunakan komponen TabelProduk yang sudah ada tanpa me
 **Perbaikan:**
 - Menambahkan `export const dynamic = "force-dynamic"` agar daftar produk admin selalu mengambil data paling segar dari database setiap request.
 
+### US-08 Tambah produk [SENDIRI]
+
+**Prompt:**
+
+Baca AGENTS.md aturan keamanan nomor 3 dan docs/user-stories.md bagian US-08.
+
+Buat Server Action tambahProduk di app/admin/actions.js untuk menambahkan produk baru ke tabel "produk" di Supabase menggunakan koneksi admin. Wajib periksa status login admin di server sebelum menyimpan data. Ambil field nama, harga (sebagai angka/integer), kategori, foto_url, dan deskripsi dari form. Setelah berhasil disimpan, revalidasi cache dan alihkan (redirect) kembali ke /admin.
+
+Sambungkan Server Action tersebut ke form di app/admin/produk/baru/page.jsx (dan components/FormProduk.jsx) tanpa merusak tampilan. Jika gagal, tampilkan pesan error yang jelas. Hapus CatatanBelumAktif dari halaman tambah produk.
+
+**Hasil:**
+- Membuat Server Action `tambahProduk` di `app/admin/actions.js` dengan verifikasi sesi admin (`supabase.auth.getUser()`), validasi field, parsing harga ke integer, dan insert ke tabel `produk` di Supabase.
+- Memperbarui `components/FormProduk.jsx` agar mendukung props `action`, `error`, dan `isPending` tanpa mengubah tata letak.
+- Menghubungkan form di `app/admin/produk/baru/page.jsx` menggunakan `useActionState` ke action `tambahProduk`.
+- Melakukan revalidasi cache dan redirect ke `/admin` setelah produk baru berhasil ditambahkan.
+- Menghapus komponen `CatatanBelumAktif` dari halaman tambah produk.
+
+**Perbaikan:**
+- Menambahkan validasi nilai harga tidak boleh negatif dan penanganan fallback error pesan yang jelas jika Supabase mengembalikan kegagalan.
+
+

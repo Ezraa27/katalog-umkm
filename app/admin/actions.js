@@ -77,3 +77,50 @@ export async function gantiPassword(prevStateOrFormData, maybeFormData) {
 
   return { sukses: true, pesan: "Password berhasil diganti." };
 }
+
+export async function tambahProduk(prevStateOrFormData, maybeFormData) {
+  const formData = maybeFormData instanceof FormData ? maybeFormData : prevStateOrFormData;
+  const nama = formData.get("nama")?.toString().trim();
+  const hargaRaw = formData.get("harga")?.toString().trim();
+  const kategori = formData.get("kategori")?.toString().trim() || null;
+  const foto_url = formData.get("foto_url")?.toString().trim() || null;
+  const deskripsi = formData.get("deskripsi")?.toString().trim() || null;
+
+  if (!nama) {
+    return { error: "Nama produk wajib diisi." };
+  }
+
+  const harga = parseInt(hargaRaw, 10);
+  if (isNaN(harga) || harga < 0) {
+    return { error: "Harga harus berupa angka dan tidak boleh negatif." };
+  }
+
+  const supabase = await createAdminClient();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return { error: "Anda belum login atau sesi telah berakhir. Silakan login kembali." };
+  }
+
+  const { error: insertError } = await supabase.from("produk").insert([
+    {
+      nama,
+      harga,
+      kategori,
+      foto_url,
+      deskripsi,
+    },
+  ]);
+
+  if (insertError) {
+    return { error: insertError.message || "Gagal menyimpan produk ke database." };
+  }
+
+  revalidatePath("/", "layout");
+  revalidatePath("/admin");
+  revalidatePath("/");
+  redirect("/admin");
+}
